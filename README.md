@@ -1,4 +1,5 @@
 # node学习笔记
+[[参考文档](http://www.jq-school.com/api/nodejs/api.html#t1)](#)
 
 ## **Node.js的API列表**
 
@@ -79,3 +80,64 @@ response.cookie('haha', 'name1=value1&name2=value2', {
 maxAge:10*1000, path:'/', httpOnly:true
 });
 ```
+
+## **session**
+
+* options
+name: 设置 cookie 中，保存 session 的字段名称，默认为 connect.sid 。
+
+store: session 的存储方式，默认存放在内存中，也可以使用 redis，mongodb 等。express 生态中都有相应模块的支持。
+
+secret: 通过设置的 secret 字符串，来计算 hash 值并放在 cookie 中，使产生的 signedCookie 防篡改。
+
+cookie: 设置存放 session id 的 cookie 的相关选项，默认为 (default: { path: ‘/’, httpOnly: true, secure: false, maxAge: null })
+
+genid: 产生一个新的 session_id 时，所使用的函数， 默认使用 uid2 这个 npm 包。
+
+rolling: 每个请求都重新设置一个 cookie，默认为 false。
+
+resave: 即使 session 没有被修改，也保存 session 值，默认为 true。
+
+* eg
+```
+var express = require('express');
+var session = require('session');
+var app = express();
+
+app.use(session({
+    secret: 'hubwiz app', //secret的值建议使用随机字符串
+    cookie: {maxAge: 60 * 1000 * 30} // 过期时间（毫秒）
+}));
+app.get('/', function (req, res) {
+    if (req.session.sign) {//检查用户是否已经登录
+        console.log(req.session);//打印session的值
+        res.send('welecome <strong>' + req.session.name + '</strong>, 欢迎你再次登录');
+    } else {//否则展示index页面
+        req.session.sign = true;
+        req.session.name = '汇智网'；
+        res.end('欢迎登陆！');
+    }
+});
+app.listen(80);
+```
+以上来自《node.js开发实战详解》，以下来自nodeAPI文档。
+
+## 概要
+
+* global
+* process
+* require()
+* require.resolve()
+* require.paths
+* __filename
+* __dirname
+* module
+
+## 定时器
+
+* setTimeout(callback, delay, [arg], [...])
+* clearTimeout(timeoutId)
+* setInterval(callback, delay, [arg], [...])
+* clearInterval(intervalId)
+
+## process？
